@@ -1,5 +1,6 @@
 package com.example.devdex.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,11 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.devdex.R
 
 @Preview(showBackground = true)
 
@@ -48,8 +48,13 @@ fun LoginScreen() {
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        Icon(imageVector = Icons.Filled.Home)
 
+        Image(
+            painter = painterResource(id = R.drawable.pokeball),
+            contentDescription = "",
+            alignment = Alignment.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
         Text(
             text = "DevDex",
             fontSize = 30.sp,
@@ -96,17 +101,22 @@ fun LoginScreen() {
         FilledTonalButton(onClick = { }, modifier = Modifier.fillMaxWidth()) {
             Text("LOGIN")
         }
+
+        val annotatedString = buildAnnotatedString {
+            append("¿No tienes perfil? ")
+
+            withLink(
+                LinkAnnotation.Clickable(
+                    tag = "Crear Perfil", linkInteractionListener = {
+                        // Do something when "Crear Perfil" is clicked
+                    })
+            ) {
+                append("Crear Perfil")
+            }
+        }
+
         Text(
-            text = buildAnnotatedString {
-                append("¿Ya tienes perfil? ")
-                val linkAnnotation = LinkAnnotation.Url(
-                    url = "https://developer.android.com",
-                    styles = TextLinkStyles(style = SpanStyle(color = Color.Blue))
-                )
-                withLink(linkAnnotation) {
-                    append("Iniciar sesión")
-                }
-            }, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
+            text = annotatedString, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
         )
 
     }

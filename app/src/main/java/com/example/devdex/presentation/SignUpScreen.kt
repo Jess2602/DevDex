@@ -1,6 +1,8 @@
 package com.example.devdex.presentation
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,22 +35,28 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.devdex.R
+import com.example.devdex.data.model.Avatar
 
+@Preview(showBackground = true)
 @Composable
-fun LoginScreen(navController: NavController) {
-
+fun SignUpScreen() {
     var userName by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var isPasswordVisible by remember { mutableStateOf(false) }
-
+    var email by remember { mutableStateOf("") }
+    val avatarList = listOf(
+        Avatar(id = 1, imageId = R.drawable.pikachu),
+        Avatar(id = 2, imageId = R.drawable.bulbasaur),
+        Avatar(id = 3, imageId = R.drawable.charmander),
+        Avatar(id = 4, imageId = R.drawable.evee),
+        Avatar(id = 5, imageId = R.drawable.gengar),
+        Avatar(id = 6, imageId = R.drawable.squirtle),
+    )
+    var selectedAvatar by remember { mutableStateOf<Avatar?>(null) }
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -93,34 +105,69 @@ fun LoginScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Contraseña")
+        Text(text = "Correo electrónico")
 
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(text = "Contraseña") },
+            value = email,
+            onValueChange = { email = it },
+            label = { Text(text = "Correo electrónico") },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Ej. 123") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            placeholder = { Text(text = "entrenador@ejemplo.com") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             shape = RoundedCornerShape(16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
 
+        Text(text = "Elige tu Avatar")
+
+        Spacer(modifier = Modifier.height(16.dp))
+//aqui va el scroll de fotos de perfil
+        LazyRow(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            userScrollEnabled = true,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(avatarList) { item ->
+                val isSelected = item == selectedAvatar
+                Image(
+                    painter = painterResource(id = item.imageId),
+                    contentDescription = "Avatar",
+                    modifier = Modifier
+                        .size(70.dp)
+                        .clickable(
+                            enabled = true, onClick = { selectedAvatar = item })
+                        .then(
+                            if (isSelected) {
+                                Modifier.border(
+                                    width = 2.dp,
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Modifier
+                            }
+                        )
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
         FilledTonalButton(onClick = { }, modifier = Modifier.fillMaxWidth()) {
-            Text("LOGIN")
+            Text("CREAR PERFIL")
         }
 
         val annotatedString = buildAnnotatedString {
-            append("¿No tienes perfil? ")
+            append("¿Ya tienes perfil? ")
 
             withLink(
                 LinkAnnotation.Clickable(
-                    tag = "Crear Perfil", linkInteractionListener = {
-                        navController.navigate("sign_up_screen")
+                    tag = "Iniciar sesión", linkInteractionListener = {
+                        //navController.navigate("login_screen")
                     })
             ) {
-                append("Crear Perfil")
+                append("Iniciar sesión")
             }
         }
 
